@@ -1,6 +1,5 @@
 body {
   font-family: Arial, sans-serif;
-  padding: 20px;
   margin: 0;
   background-color: #3c3c3c;
 }
@@ -32,7 +31,7 @@ h1 {
   width: 25vw;
   padding: 1vw;
   background-color: #fff;
-  margin: 2vw;
+  margin: 1vw;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
@@ -41,10 +40,10 @@ h1 {
 }
 
 .upgradeTimes {
-  width: 25vw;
+  width: 11vw;
   padding: 1vw;
   background-color: #fff;
-  margin: 2vw;
+  margin: 3vw;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
@@ -72,6 +71,10 @@ h1 {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+.options input{
+  width: 2vw;
+}
+
 .ship h2 {
   margin-top: 0;
   color: #90fffb;
@@ -81,21 +84,21 @@ h1 {
 
 .options h2 {
   margin-top: 0;
-  color: #90fffb;
+  color: #beff90;
   text-align: center;
   margin-bottom: 20px;
 }
 
 .upgradeTimes h2 {
   margin-top: 0;
-  color: #90fffb;
+  color: #beff90;
   text-align: center;
   margin-bottom: 20px;
 }
 
 .outcomes h2 {
   margin-top: 0;
-  color: #90fffb;
+  color: #ffc990;
   text-align: center;
   margin-bottom: 20px;
 }

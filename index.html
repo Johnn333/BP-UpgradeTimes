@@ -88,7 +88,8 @@
 						<option value="U1">U1</option>
 					</select>
 				</label>
-				<label>Garrison Mode (Half Time): <input type="checkbox" id="garrison"></label>
+				<label>Garrison Mode (Half Time):<input type="checkbox" id="garrison"></label>
+				<br>
 				<label class="textin">Current Flag Upgrade Kits: <input type="text" id="flagKits"></label>
 				<label class="textin">Current Normal Upgrade Kits: <input type="text" id="normalKits"></label>
 				<label class="textin">Current Upgrade Tokens (1d): <input type="text" id="upgradeTokens"></label>
@@ -103,7 +104,7 @@
 						<thead>
 							<tr>
 							<th></th>
-							<th>Flag |</th>
+							<th>Flag</th>
 							<th>Normal</th>
 							</tr>
 						</thead>
@@ -138,9 +139,9 @@
 		</div>
 
 		<div class="outcomes">
-			<h2>Resources Needed</h2>
-			<label class="discount">Total Time</label>
-			<label class="discount">Kits Needed</label>
+			<h2>Outcome</h2>
+			<label>Total Time: <data id="timeNeeded">dd/hh/mm</data></label>
+			<label>Kits Needed <data id="kitsNeeded"></data></label>
 			<label class="discount"></label>
 		</div>
 	</div>
