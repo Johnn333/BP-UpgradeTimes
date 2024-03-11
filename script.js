@@ -158,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("garrison").addEventListener("change", function(input){
-        console.log("HEllo");
         if (garrisonToggle == 1) garrisonToggle = 2;
         else garrisonToggle = 1;
         reduceTime(parseInt(document.getElementById("intelLevel").value));
