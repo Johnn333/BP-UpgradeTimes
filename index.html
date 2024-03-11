@@ -81,7 +81,7 @@
 					</select>
 				</label>
 				<label>Upgrade Goal: 
-					<select name="intelLevel" id="intelLevel">
+					<select name="upgradeGoal" id="upgradeGoal">
 						<option value="X1">X1</option>
 						<option value="U3">U3</option>
 						<option value="U2">U2</option>
@@ -89,10 +89,10 @@
 					</select>
 				</label>
 				<label>Garrison Mode (Half Time):<input type="checkbox" id="garrison"></label>
-				<br>
-				<label class="textin">Current Flag Upgrade Kits: <input type="text" id="flagKits"></label>
+				<!-- <br> -->
+				<!-- <label class="textin">Current Flag Upgrade Kits: <input type="text" id="flagKits"></label>
 				<label class="textin">Current Normal Upgrade Kits: <input type="text" id="normalKits"></label>
-				<label class="textin">Current Upgrade Tokens (1d): <input type="text" id="upgradeTokens"></label>
+				<label class="textin">Current Upgrade Tokens (1d): <input type="text" id="upgradeTokens"></label> -->
 			</div>
 		</div>
 
@@ -140,9 +140,41 @@
 
 		<div class="outcomes">
 			<h2>Outcome</h2>
-			<label>Total Time: <data id="timeNeeded">dd/hh/mm</data></label>
-			<label>Kits Needed <data id="kitsNeeded"></data></label>
-			<label class="discount"></label>
+			<div id="output">
+				<table>
+					<thead>
+						<tr>
+						<th></th>
+						<th>Flag</th>	
+						<th>Ship 1</th>
+						<th>Ship 2</th>
+						<th>Ship 3</th>
+						<th>Ship 4</th>
+						<th style="color: chartreuse;">Totals</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						<td id="levelGoal">Time to X1: </td>
+						<td id="levelTimeFlag"></td>
+						<td id="levelTimeShip1"></td>
+						<td id="levelTimeShip2"></td>
+						<td id="levelTimeShip3"></td>
+						<td id="levelTimeShip4"></td>
+						<td id="totalTimeShips"></td>
+						</tr>
+						<tr>
+						<td id="kitsNeeded">Kits Needed: </td>
+						<td id="kitsNeededFlag"></td>
+						<td id="kitsNeededShip1"></td>
+						<td id="kitsNeededShip2"></td>
+						<td id="kitsNeededShip3"></td>
+						<td id="kitsNeededShip4"></td>
+						<td id="totalNeededKits"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
