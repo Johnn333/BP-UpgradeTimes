@@ -1,16 +1,16 @@
 // Upgrade times D/H/M
 const baseUpgradeTimes = {
     "U1": [0,19,22],
-    "U2": [2,10,0],
-    "U3": [4,20,0],
-    "X1": [6,19,0],
+    "U2": [2,10,8],
+    "U3": [4,20,17],
+    "X1": [6,19,12],
 }
 
 // Flag upgrade times D/H/M
 const baseUpgradeTimesFlag = {
     "U1": [0,22,26],
-    "U2": [2,19,0],
-    "U3": [5,15,0],
+    "U2": [2,19,19],
+    "U3": [5,14,38],
     "X1": [10,4,0],
 }
 
