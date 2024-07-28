@@ -7,6 +7,14 @@ const currentShipLevels = {
     "Ship 4": "U0",
 }
 
+// Modify for loop boundaries based on upgrade level i.e X1 should do all below X1, U1 should only do itself
+const offsets = {
+    "U1": 3,
+    "U2": 2,
+    "U3": 1,
+    "X1": 0,
+}
+
 // Upgrade times D/H/M
 const baseUpgradeTimes = {
     "U1": [0,19,22],
@@ -75,70 +83,53 @@ function arrayToMins(array){
 
 // Get Time in string format XXd XXh XXm
 function toTime(upgradeLevel, flagFlag){
-    if(flagFlag) return upgradeTimesFlag[upgradeLevel][0]+"d "+upgradeTimesFlag[upgradeLevel][1]+"h "+upgradeTimesFlag[upgradeLevel][2]+"m";
-    return upgradeTimes[upgradeLevel][0]+"d "+upgradeTimes[upgradeLevel][1]+"h "+upgradeTimes[upgradeLevel][2]+"m";
+    if(flagFlag) return `${upgradeTimesFlag[upgradeLevel][0]}d ${upgradeTimesFlag[upgradeLevel][1]}h ${upgradeTimesFlag[upgradeLevel][2]}m`
+    return `${upgradeTimes[upgradeLevel][0]}d ${upgradeTimes[upgradeLevel][1]}h ${upgradeTimes[upgradeLevel][2]}m`
 }
 
 document.addEventListener("DOMContentLoaded", function() {
     const upgradesContainers = document.getElementsByClassName("upgrades");
 
+    // Helper function to update upgrades
+    function updateUpgrades(shipName, upgrades, upgradeLevel) {
+        // Clear old state
+        upgrades.forEach(checkbox => checkbox.querySelector("input").checked = false);
+        
+        if (upgradeLevel !== "U0") {
+            for (let j = 0; j < upgrades.length - offsets[upgradeLevel]; j++) {
+                upgrades[j].querySelector("input").checked = true;
+            }
+
+            currentShipLevels[shipName] = upgradeLevel;
+            console.log(`Upgrade ${upgradeLevel} toggled for ${shipName}`);
+        } else {
+            currentShipLevels[shipName] = "U0";
+            console.log(`Upgrades cleared for ${shipName}`);
+        }
+
+        updateStatBlock();
+    }
+
     // Iterate over each upgrades container
     for (let i = 0; i < upgradesContainers.length; i++) {
-        const upgrades = upgradesContainers[i].querySelectorAll(".upgrade");
-        
+        const container = upgradesContainers[i];
+        const upgrades = container.querySelectorAll(".upgrade");
+        const clearButtons = container.querySelectorAll(".clear");
+
         // Add event listeners to each upgrade checkbox
         upgrades.forEach(function (checkbox) {
             checkbox.addEventListener("change", function () {
                 const shipName = this.closest('.ship').querySelector('h2').textContent.trim();
-                const upgradeLevel = this.textContent[1]+=this.textContent[2];
-                
-                // Clear old state
-                for (let j = 0; j < upgrades.length; j++) {
-                    upgrades[j].querySelector("input").checked = false;
-                }
-                
-                // Modify for loop boundaries based on upgrade level i.e X1 should do all below X1, U1 should only do itself
-                const offsets = {
-                    "U1": 3,
-                    "U2": 2,
-                    "U3": 1,
-                    "X1": 0,
-                }
-                
-                for (let j = 0; j < upgrades.length-offsets[upgradeLevel]; j++) {
-                    upgrades[j].querySelector("input").checked = true;
-                }
-
-                currentShipLevels[shipName] = upgradeLevel;
-                console.log(`Upgrade ${upgradeLevel} toggled for ${shipName}`);
-
-                updateStatBlock();
+                const upgradeLevel = this.textContent[1] + this.textContent[2]; // Fix concatenation error
+                updateUpgrades(shipName, upgrades, upgradeLevel);
             });
         });
-    }
-});
 
-document.addEventListener("DOMContentLoaded", function() {
-    const upgradesContainers = document.getElementsByClassName("upgrades");
-
-    // Iterate over each upgrades container
-    for (let i = 0; i < upgradesContainers.length; i++) {
-        const upgrades = upgradesContainers[i].querySelectorAll(".upgrade");
-        const clear = upgradesContainers[i].querySelectorAll(".clear")
-        // Add event listeners to each upgrade checkbox
-        clear.forEach(function (button) {
+        // Add event listeners to each clear button
+        clearButtons.forEach(function (button) {
             button.addEventListener("click", function () {
                 const shipName = this.closest('.ship').querySelector('h2').textContent.trim();
-                
-                // Clear old state
-                for (let j = 0; j < upgrades.length; j++) {
-                    upgrades[j].querySelector("input").checked = false;
-                }
-                
-                currentShipLevels[shipName] = "U0";
-                console.log(`Upgrades cleared for ${shipName}`);
-
-                updateStatBlock();
+                updateUpgrades(shipName, upgrades, "U0");
             });
         });
     }
@@ -187,14 +178,6 @@ function calcKits(current, flag){
     const flagKits = [10,40,80,80];
     const normalKits = [10,30,60,60];
 
-    // Modify for loop boundaries based on upgrade level i.e X1 should do all below X1, U1 should only do itself
-    const offsets = {
-        "U1": 3,
-        "U2": 2,
-        "U3": 1,
-        "X1": 0,
-    }
-
     const upgradeArray = ["U1","U2","U3","X1"];
 
     let kitsUsed = 0;
@@ -225,13 +208,6 @@ function timeTotal(){
 function fromCurrentToGoalTime(current, flag){
     goal = document.getElementById("upgradeGoal").value;
 
-    // Modify for loop boundaries based on upgrade level i.e X1 should do all below X1, U1 should only do itself
-    const offsets = {
-        "U1": 3,
-        "U2": 2,
-        "U3": 1,
-        "X1": 0,
-    }
     const upgradeArray = ["U1","U2","U3","X1"];
 
     let minsDone = 0;
