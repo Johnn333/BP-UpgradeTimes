@@ -1,3 +1,12 @@
+// Global to keep track of current upgrade levels, reading from the check boxes for each ship is tiresome. 
+const currentShipLevels = {
+    "Flagship": "U0",
+    "Ship 1": "U0",
+    "Ship 2": "U0",
+    "Ship 3": "U0",
+    "Ship 4": "U0",
+}
+
 // Upgrade times D/H/M
 const baseUpgradeTimes = {
     "U1": [0,19,22],
@@ -8,29 +17,15 @@ const baseUpgradeTimes = {
 
 // Flag upgrade times D/H/M
 const baseUpgradeTimesFlag = {
-    "U1": [0,22,26],
-    "U2": [2,19,19],
-    "U3": [5,14,38],
-    "X1": [10,4,0],
-}
-
-// Global to keep track of current upgrade levels, reading from the check boxes for each ship is tiresome. 
-const currentShipLevels = {
-    "Flagship": "U0",
-    "Ship 1": "U0",
-    "Ship 2": "U0",
-    "Ship 3": "U0",
-    "Ship 4": "U0",
+    "U1": [2,13,12],
+    "U2": [4,6,0],
+    "U3": [6,19,12],
+    "X1": [0,0,0],
 }
 
 // Deep copy of above values, so we can change them.
 const upgradeTimes = JSON.parse(JSON.stringify(baseUpgradeTimes));
 const upgradeTimesFlag = JSON.parse(JSON.stringify(baseUpgradeTimesFlag));
-let garrisonToggle = 1;
-
-function updateOutcomes(){
-
-}
 
 function updateElement(elementID, data){
     document.getElementById(elementID).innerText = data; 
@@ -51,12 +46,12 @@ updateTable();
 
 function reduceTime(reduction){
     for(upgrade in upgradeTimesFlag){
-        let minutes = arrayToMins(baseUpgradeTimesFlag[upgrade])/garrisonToggle;
+        let minutes = arrayToMins(baseUpgradeTimesFlag[upgrade]);
         upgradeTimesFlag[upgrade] = minsToArray(minutes*(1-(reduction/100)));
     }
 
     for(upgrade in upgradeTimes){
-        let minutes = arrayToMins(baseUpgradeTimes[upgrade])/garrisonToggle;
+        let minutes = arrayToMins(baseUpgradeTimes[upgrade]);
         upgradeTimes[upgrade] = minsToArray(minutes*(1-(reduction/100)));
     }
 
@@ -152,16 +147,6 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("intelLevel").addEventListener("change", function(input){
         reduceTime(parseInt(input.target.value));
-        updateStatBlock();
-    })
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("garrison").addEventListener("change", function(input){
-        if (garrisonToggle == 1) garrisonToggle = 2;
-        else garrisonToggle = 1;
-        reduceTime(parseInt(document.getElementById("intelLevel").value));
-
         updateStatBlock();
     })
 });
