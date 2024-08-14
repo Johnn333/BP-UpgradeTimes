@@ -28,7 +28,7 @@ const baseUpgradeTimesFlag = {
     "U1": [2,13,12],
     "U2": [4,6,0],
     "U3": [6,19,12],
-    "X1": [10,5,0],
+    "X1": [10,4,48],
 }
 
 // Deep copy of above values, so we can change them.
