@@ -9,27 +9,31 @@ const currentShipLevels = {
 
 // Modify for loop boundaries based on upgrade level i.e X1 should do all below X1, U1 should only do itself
 const offsets = {
-    "U1": 3,
+    "U1": 1,
     "U2": 2,
-    "U3": 1,
-    "X1": 0,
-}
-
-// Upgrade times D/H/M
-const baseUpgradeTimes = {
-    "U1": [0,19,22],
-    "U2": [2,10,8],
-    "U3": [4,20,17],
-    "X1": [6,19,12],
+    "U3": 3,
+    "X1": 4,
+    "CAP": 5
 }
 
 // Flag upgrade times D/H/M
 const baseUpgradeTimesFlag = {
-    "U1": [2,13,12],
-    "U2": [4,6,0],
-    "U3": [6,19,12],
-    "X1": [10,4,48],
+    "U1": [0,22,28],
+    "U2": [2,19,20],
+    "U3": [5,14,39],
+    "X1": [8,12,0],
+    "CAP": [11,21,43],
 }
+
+// Upgrade times D/H/M
+const baseUpgradeTimes = {
+    "U1": [0,19,23],    // |
+    "U2": [2,10,8],     // | These three will likely change
+    "U3": [4,20,17],    // |
+    "X1": [5,2,26],
+    "CAP": [7,15,37],
+}
+
 
 // Deep copy of above values, so we can change them.
 const upgradeTimes = JSON.parse(JSON.stringify(baseUpgradeTimes));
@@ -44,11 +48,13 @@ function updateTable(){
     updateElement("U2TimeFlag", toTime("U2",1));
     updateElement("U3TimeFlag", toTime("U3",1));
     updateElement("X1TimeFlag", toTime("X1",1));
+    updateElement("CAPTimeFlag", toTime("CAP",1));
 
     updateElement("U1Time", toTime("U1",0));
     updateElement("U2Time", toTime("U2",0));
     updateElement("U3Time", toTime("U3",0));
     updateElement("X1Time", toTime("X1",0));
+    updateElement("CAPTime", toTime("CAP",0));
 }
 updateTable();
 
@@ -96,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
         upgrades.forEach(checkbox => checkbox.querySelector("input").checked = false);
         
         if (upgradeLevel !== "U0") {
-            for (let j = 0; j < upgrades.length - offsets[upgradeLevel]; j++) {
+            for (let j = 0; j < offsets[upgradeLevel]; j++) {
                 upgrades[j].querySelector("input").checked = true;
             }
 
@@ -120,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
         upgrades.forEach(function (checkbox) {
             checkbox.addEventListener("change", function () {
                 const shipName = this.closest('.ship').querySelector('h2').textContent.trim();
-                const upgradeLevel = this.textContent[1] + this.textContent[2]; // Fix concatenation error
+                const upgradeLevel = this.textContent[1] + this.textContent[2] + (this.textContent[3] === "P" ? "P" : ""); // Fix concatenation error
                 updateUpgrades(shipName, upgrades, upgradeLevel);
             });
         });
@@ -152,49 +158,67 @@ document.addEventListener("DOMContentLoaded", function() {
 
 let totalTime = 0;
 let totalNormalKits = 0
-let totalFlagkits = 0;
+let totalFlagKits = 0;
+let totalNormalCores = 0
+let totalFlagCores = 0;
 // Function called to update the stats based on given upgrade levels.
 function updateStatBlock(){
     totalTime = 0; // Reset Totals
-    totalNormalKits = 0
-    totalFlagkits = 0;
-
+    
     updateElement("levelTimeFlag",fromCurrentToGoalTime(currentShipLevels["Flagship"],1));
     updateElement("levelTimeShip1",fromCurrentToGoalTime(currentShipLevels["Ship 1"],0));
     updateElement("levelTimeShip2",fromCurrentToGoalTime(currentShipLevels["Ship 2"],0));
     updateElement("levelTimeShip3",fromCurrentToGoalTime(currentShipLevels["Ship 3"],0));
     updateElement("levelTimeShip4",fromCurrentToGoalTime(currentShipLevels["Ship 4"],0));
     updateElement("totalTimeShips", timeTotal());
-
+    
+    totalNormalKits = 0;
+    totalFlagKits = 0;
     updateElement("kitsNeededFlag",calcKits(currentShipLevels["Flagship"], 1));
     updateElement("kitsNeededShip1",calcKits(currentShipLevels["Ship 1"], 0));
     updateElement("kitsNeededShip2",calcKits(currentShipLevels["Ship 2"], 0));
     updateElement("kitsNeededShip3",calcKits(currentShipLevels["Ship 3"], 0));
     updateElement("kitsNeededShip4",calcKits(currentShipLevels["Ship 4"], 0));
-    updateElement("totalNeededKits","F: "+totalFlagkits+"/N: "+totalNormalKits);
+    updateElement("totalNeededKits","F: "+totalFlagKits+"/N: "+totalNormalKits);
+
+    totalNormalCores = 0;
+    totalFlagCores = 0;
+    updateElement("coresNeededFlag",calcCores(currentShipLevels["Flagship"], 1));
+    updateElement("coresNeededShip1",calcCores(currentShipLevels["Ship 1"], 0));
+    updateElement("coresNeededShip2",calcCores(currentShipLevels["Ship 2"], 0));
+    updateElement("coresNeededShip3",calcCores(currentShipLevels["Ship 3"], 0));
+    updateElement("coresNeededShip4",calcCores(currentShipLevels["Ship 4"], 0));
+    updateElement("totalNeededCores","F: "+totalFlagCores+"/N: "+totalNormalCores);
+}
+
+function calcCores(current, flag){
+    if (current !== "CAP") {
+        if (flag) totalFlagCores += 10;
+        else totalNormalCores += 10;
+        return 10;
+    }
+    return 0
 }
 
 function calcKits(current, flag){
-    const flagKits = [10,40,80,80];
-    const normalKits = [10,30,60,60];
-
-    const upgradeArray = ["U1","U2","U3","X1"];
+    const flagKits = [10,40,80,80,0];   // CAP needs 0 `kits` but index errors if not included here 
+    const normalKits = [10,30,60,60,0];
 
     let kitsUsed = 0;
     let kitsNeeded = 0;
 
     // Work out time spent upgrading so far.
-    for (let j = 0; j < upgradeArray.length-offsets[current]; j++) {
+    for (let j = 0; j < offsets[current]; j++) {
         if(flag) kitsUsed += flagKits[j];
         else kitsUsed += normalKits[j];
     }
     // Work out time needed still
-    for (let j = 0; j < upgradeArray.length-offsets[goal]; j++) {
+    for (let j = 0; j < offsets[goal]; j++) {
         if(flag) kitsNeeded += flagKits[j];
         else kitsNeeded += normalKits[j];
     }
 
-    if(flag) totalFlagkits = kitsNeeded-kitsUsed;
+    if(flag) totalFlagKits = kitsNeeded-kitsUsed;
     else totalNormalKits += kitsNeeded-kitsUsed;
 
     return kitsNeeded-kitsUsed;
@@ -208,18 +232,18 @@ function timeTotal(){
 function fromCurrentToGoalTime(current, flag){
     goal = document.getElementById("upgradeGoal").value;
 
-    const upgradeArray = ["U1","U2","U3","X1"];
+    const upgradeArray = ["U1","U2","U3","X1","CAP"];
 
     let minsDone = 0;
     let minsLeft = 0;
 
     // Work out time spent upgrading so far.
-    for (let j = 0; j < upgradeArray.length-offsets[current]; j++) {
+    for (let j = 0; j < offsets[current]; j++) {
         if(flag) minsDone += arrayToMins(upgradeTimesFlag[upgradeArray[j]]);
         else minsDone += arrayToMins(upgradeTimes[upgradeArray[j]]);
     }
     // Work out time needed still
-    for (let j = 0; j < upgradeArray.length-offsets[goal]; j++) {
+    for (let j = 0; j < offsets[goal]; j++) {
         if(flag) minsLeft += arrayToMins(upgradeTimesFlag[upgradeArray[j]]);
         else minsLeft += arrayToMins(upgradeTimes[upgradeArray[j]]);
     }
