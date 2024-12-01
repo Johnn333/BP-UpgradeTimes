@@ -192,6 +192,10 @@ function updateStatBlock(){
 }
 
 function calcCores(current, flag){
+    let goal = document.getElementById("upgradeGoal").value;
+
+    if (goal !== "CAP") return 0;
+
     if (current !== "CAP") {
         if (flag) totalFlagCores += 10;
         else totalNormalCores += 10;
@@ -201,6 +205,8 @@ function calcCores(current, flag){
 }
 
 function calcKits(current, flag){
+    let goal = document.getElementById("upgradeGoal").value;
+    
     const flagKits = [10,40,80,80,0];   // CAP needs 0 `kits` but index errors if not included here 
     const normalKits = [10,30,60,60,0];
 
@@ -230,7 +236,7 @@ function timeTotal(){
 }
 
 function fromCurrentToGoalTime(current, flag){
-    goal = document.getElementById("upgradeGoal").value;
+    let goal = document.getElementById("upgradeGoal").value;
 
     const upgradeArray = ["U1","U2","U3","X1","CAP"];
 
