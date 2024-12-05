@@ -1,0 +1,87 @@
+<h4 style="text-align: center;">Upgrade Times</h4>
+<div id="upgradetable">
+    <table class="table">
+    <thead>
+        <tr>
+            <th>Upgrade Level</th>
+            @if(FlagExists())
+            {
+                <th>Flagship Times</th>
+            }
+            <th>Normal Times</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var name in LevelUpgradeInfo.Keys)
+        {
+            <tr>
+                <td>@name</td>
+                @if(FlagExists())
+                {
+                    <td>@GetUpgradeTimes()[name].Flag</td>
+                }
+                <td>@GetUpgradeTimes()[name].Normal</td>
+            </tr>
+        }
+        <tr>
+            <th>Total: </th>
+            @if(FlagExists())
+            {
+                <th>@TimeTotal(true)</th>
+            }
+            <th>@TimeTotal(false)</th>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+@code
+{
+    [Parameter] required public IReadOnlyList<ShipData.ShipInfo> ShipInfos { get; set; }
+    [Parameter] required public IReadOnlyDictionary<string, UpgradeData.UpgradeInfo> LevelUpgradeInfo { get; set; }
+    [Parameter] required public int IntelDiscount { get; set; }
+    [Parameter] required public EventCallback OnUpgradesChanged { get; set; }
+    
+    private Tuple<Dictionary<string, UpgradeData.UpgradeTimeInfo>, int> _upgradeTimes;
+    public Dictionary<string, UpgradeData.UpgradeTimeInfo> GetUpgradeTimes()
+    {
+        if(_upgradeTimes == null || _upgradeTimes.Item2 != IntelDiscount)
+        { 
+            _upgradeTimes = Tuple.Create(LevelUpgradeInfo.ToDictionary(
+                x => x.Key,
+                x => new UpgradeData.UpgradeTimeInfo(
+                    FlagExists() ? new UpgradeTime(x.Value.FlagInfo.BaseTime, IntelDiscount) : null,
+                    new UpgradeTime(x.Value.NormalInfo.BaseTime, IntelDiscount)
+                )
+            ),IntelDiscount);
+            OnUpgradesChanged.InvokeAsync();
+        }
+        return _upgradeTimes.Item1;
+    }
+
+    public bool FlagExists()
+    {
+        foreach(var ship in ShipInfos)
+        {
+            if(ship.IsFlag) return true;
+        }
+        return false;
+    }
+
+    private string TimeTotal(bool flag)
+    {
+        TimeSpan totalTime = SumTimes(GetUpgradeTimes(), flag);
+        return Formatter.Format(totalTime);
+    }
+
+    public TimeSpan SumTimes(Dictionary<string, UpgradeData.UpgradeTimeInfo> TimeDict, bool flag)
+    {
+        TimeSpan Time = new TimeSpan();
+
+        foreach (String ShipLevel in LevelUpgradeInfo.Keys)
+        {
+            Time += flag ? TimeDict[ShipLevel].Flag.GetTimeSpan() : TimeDict[ShipLevel].Normal.GetTimeSpan();
+        }
+        return Time;
+    }
+}
