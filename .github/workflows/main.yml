@@ -21,7 +21,7 @@ jobs:
         run: touch release/wwwroot/.nojekyll
 
       - name: Change base-tag in index.html
-        run: sed -i 's/<base href="\/" \/>/<base href="\/johnn333.github.io/BP-UpgradeTimes\/" \/>/g' release/wwwroot/index.html
+        run: sed -i 's#<base href="/" />#<base href="/johnn333.github.io/BP-UpgradeTimes/" />#g' release/wwwroot/index.html
         
       - name: Commit wwwroot to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
