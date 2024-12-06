@@ -1,0 +1,67 @@
+﻿@page "/upgrade-tracker"
+@using System.Collections.Immutable
+
+<h4 style="text-align: center;">Upgrade Level</h4>
+<div id="trackercontainer">
+    @foreach (var ship in ShipInfos) 
+    {
+        <div>
+            <h4>@ship.Name</h4>
+            @for (int i = 0; i < LevelUpgradeInfo.Count; i++)
+            {
+                int localIndex = i;
+                var levelUpgradeInfo = LevelUpgradeInfo.ElementAt(localIndex);
+                var hullInfo = ship.IsFlag ? levelUpgradeInfo.Value.FlagInfo : levelUpgradeInfo.Value.NormalInfo;
+                <label id="upgradelabel">
+                    <input type="checkbox" 
+                        checked="@GetShipLevels()[ship.Name][localIndex]"
+                        @onchange="(ChangeEventArgs e) => OnLevelChange(ship.Name, localIndex)">
+                    <b>@levelUpgradeInfo.Key</b> @FormatKitCost(hullInfo.CurrencyCost, levelUpgradeInfo.Value.CurrencyType)
+                </label><br>
+            }
+            <button @onclick="(MouseEventArgs e) => OnLevelChange(ship.Name, -1)">Clear</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] required public ImmutableList<ShipInfo> ShipInfos { get; set; }
+    [Parameter] required public ImmutableSortedDictionary<string, UpgradeInfo> LevelUpgradeInfo { get; set; }
+    [Parameter] required public EventCallback OnLevelsChanged { get; set; }
+    private Dictionary<string, bool[]> _shipLevels;
+    public Dictionary<string, bool[]> GetShipLevels()
+    {
+        if(_shipLevels == null)
+        {
+            _shipLevels = ShipInfos.ToDictionary
+            (
+                ship => ship.Name,
+                ship => new bool[LevelUpgradeInfo.Count]
+            );
+        }
+        return _shipLevels;
+    }
+
+    private string FormatKitCost(int currencyCost, CurrencyType currencyType)
+    {
+        return $"({currencyCost} {Formatter.Format(currencyType)})";
+    }
+
+    private async Task OnLevelChange(string shipName, int index)
+    {   
+        var shipLevels = GetShipLevels()[shipName];
+
+        // Rendering state wait
+        if(index >= 0) 
+        {
+            shipLevels[index] = false;
+            await Task.Yield();
+        }
+
+        for (int i = 0; i < LevelUpgradeInfo.Count; i++)
+        {
+            shipLevels[i] = (i <= index);
+        }
+        await OnLevelsChanged.InvokeAsync();
+    }
+}

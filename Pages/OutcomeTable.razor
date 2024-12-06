@@ -1,0 +1,147 @@
+@using System.Collections.Immutable
+<h4 style="text-align: center;">Outcome Table</h4>
+<div id="outcometable">
+    <table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            @foreach (var ship in ShipInfos)
+            {
+                <th>@ship.Name</th>
+            }
+            <th>Totals</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Time to @UpgradeGoal</th>
+            @foreach (var ship in ShipInfos)
+            {
+                <td>@Formatter.Format(TimeLeft(ship))</td>
+            }
+            <th>@Formatter.Format(TimeTotal())</th>
+        </tr>
+        @foreach(CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
+        {
+            @if(HasCurrency(currencyType))
+            {
+                <tr>
+                    <th>@Formatter.Format(currencyType) Needed</th>
+                    @foreach (var ship in ShipInfos)
+                    {
+                        <td>@CurrencyNeeded(ship, currencyType)</td>
+                    }
+                    <th>@TotalCurrencyNeeded(currencyType)</th>
+                </tr>
+            }
+        }
+    </tbody>
+    </table>
+</div>
+
+@code
+{
+    [Parameter] required public ImmutableList<ShipInfo> ShipInfos { get; set; }
+    [Parameter] required public ImmutableSortedDictionary<string, UpgradeInfo> LevelUpgradeInfo { get; set; }
+    [Parameter] required public IReadOnlyDictionary<string, UpgradeTimeInfo> UpgradeTimes { get; set; }
+    [Parameter] required public IReadOnlyDictionary<string, bool[]> ShipLevels { get; set; }
+    [Parameter] required public string UpgradeGoal { get; set; }
+    [Parameter] required public EventCallback OnUpgradesChanged { get; set; }
+
+    private TimeSpan TimeTotal()
+    {
+        TimeSpan timeTotal = new TimeSpan();
+        foreach (var ship in ShipInfos)
+        {
+            timeTotal += TimeLeft(ship);
+        }
+        return timeTotal;
+    }
+    private TimeSpan TimeLeft(ShipInfo ship)
+    {
+        TimeSpan timeLeft = TimeSpan.Zero;
+        var shipLevels = ShipLevels[ship.Name];
+
+        for (int i = 0; i < shipLevels.Length; i++)
+        {
+            var levelUpgradeInfo = LevelUpgradeInfo.ElementAt(i);
+            if (levelUpgradeInfo.Key == UpgradeGoal)
+            {
+                if (!shipLevels[i])
+                {
+                    var upgradeInfo = UpgradeTimes.ElementAt(i).Value;
+                    var upgradeTime = ship.IsFlag ? upgradeInfo.Flag : upgradeInfo.Normal;
+                    timeLeft += upgradeTime.GetTimeSpan();
+                }
+                break;
+            }
+
+            if (!shipLevels[i])
+            {
+                var upgradeInfo = UpgradeTimes.ElementAt(i).Value;
+                var upgradeTime = ship.IsFlag ? upgradeInfo.Flag : upgradeInfo.Normal;
+                timeLeft += upgradeTime.GetTimeSpan();
+            }
+        }
+
+        return timeLeft;
+    }
+
+    private string TotalCurrencyNeeded(CurrencyType currencyType)
+    {
+        int flagCurrency = 0;
+        int normalCurrency = 0;
+        @foreach (var ship in ShipInfos)
+        {
+            if (ship.IsFlag) flagCurrency += CurrencyNeeded(ship, currencyType);
+            else normalCurrency += CurrencyNeeded(ship, currencyType);
+        }
+
+        return FlagExists() ? $"F:{flagCurrency} / N:{normalCurrency}" : $"N:{normalCurrency}";
+    }
+
+    private int CurrencyNeeded(ShipInfo ship, CurrencyType currencyType)
+    {
+        int currencyNeeded = 0;
+        var shipLevels = ShipLevels[ship.Name];
+
+        for (int i = 0; i < shipLevels.Length; i++)
+        {
+            var levelUpgradeInfo = LevelUpgradeInfo.ElementAt(i);
+            var upgradeInfo = (ship.IsFlag ? levelUpgradeInfo.Value.FlagInfo : levelUpgradeInfo.Value.NormalInfo);
+
+            if (levelUpgradeInfo.Key == UpgradeGoal)
+            {
+                if (!shipLevels[i] && levelUpgradeInfo.Value.CurrencyType == currencyType)
+                    currencyNeeded += upgradeInfo.CurrencyCost;
+
+                break;
+            }
+
+            if (!shipLevels[i] && levelUpgradeInfo.Value.CurrencyType == currencyType)
+            {
+                currencyNeeded += upgradeInfo.CurrencyCost;
+            }
+        }
+
+        return currencyNeeded;
+    }
+
+    private bool HasCurrency(CurrencyType currencyType)
+    {
+        foreach(var upgradeInfo in LevelUpgradeInfo)
+        {
+            if(upgradeInfo.Value.CurrencyType == currencyType) return true;
+        }
+        return false;
+    }
+
+    public bool FlagExists()
+    {
+        foreach(var ship in ShipInfos)
+        {
+            if(ship.IsFlag) return true;
+        }
+        return false;
+    }
+}

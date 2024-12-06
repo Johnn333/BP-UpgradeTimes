@@ -1,0 +1,1 @@
+public record ShipInfo(string Name, bool IsFlag);

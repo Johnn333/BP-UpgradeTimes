@@ -1,0 +1,42 @@
+@page "/"
+
+<h1 style="text-align: center;">Battle Pirates Upgrade Calculator &#128674; &#128049;</h1>
+<div id="index">
+    <div id="normal" style="width: 60%;">
+        <FleetTracker UpgradeContext="@NormalContext" IntelDiscount="@IntelDiscount" UpgradeGoal="CAP" />
+    </div>
+
+    <div id="dread" style="width: 35%;">
+        <FleetTracker UpgradeContext="@DreadContext" IntelDiscount="@IntelDiscount" UpgradeGoal="E10"/>
+    </div>
+
+    <div id="intelselect">
+        <!-- Intel Level Selector -->
+        <label for="intelDiscount">Intel Level Reduction (%):</label>
+        <select id="intelDiscount" @bind="IntelDiscount">
+            <option value="0">0%</option>
+            <option value="5">5%</option>
+            <option value="10">10%</option>
+            <option value="15">15%</option>
+        </select>
+    </div>
+
+    <div id="divider" style="width: 5%;"></div>
+
+</div>
+
+@code {
+    private UpgradeContext NormalContext = new UpgradeContext(ShipData.FleetInfo, UpgradeData.LevelUpgradeInfo);
+    private UpgradeContext DreadContext = new UpgradeContext(ShipData.DreadInfo, UpgradeData.DreadLevelUpgradeInfo);
+    private int IntelDiscount = 15;
+
+    private void HandleLevelDictionaryChanged() {}
+    private void HandleUpgradeDictionaryChanged() {}
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+}

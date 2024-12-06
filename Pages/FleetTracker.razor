@@ -1,0 +1,37 @@
+<div id="index">
+    <div id="fleettracker">
+        <UpgradeTracker @ref="Tracker" ShipInfos="@UpgradeContext.ShipInfos" LevelUpgradeInfo="@UpgradeContext.LevelUpgradeInfo" OnLevelsChanged="@(() => HandleLevelDictionaryChanged())" />
+        
+        <UpgradeTable @ref="Table" ShipInfos="@UpgradeContext.ShipInfos" LevelUpgradeInfo="@UpgradeContext.LevelUpgradeInfo" IntelDiscount="@IntelDiscount" OnUpgradesChanged="@(() => HandleUpgradeDictionaryChanged())" />
+
+        @if (Tracker != null)
+        {
+            <OutcomeTable ShipInfos="@UpgradeContext.ShipInfos" LevelUpgradeInfo="@UpgradeContext.LevelUpgradeInfo" ShipLevels="@Tracker.GetShipLevels()" UpgradeTimes="@Table.GetUpgradeTimes()" UpgradeGoal="@UpgradeGoal" />
+        }
+        <!-- Upgrade Goal Selector -->
+        <label for="upgradeGoal">Upgrade Goal:</label>
+        <select id="upgradeGoal" @bind="UpgradeGoal">
+            @foreach(string UpgradeName in UpgradeContext.LevelUpgradeInfo.Keys)
+            {
+                <option value="@UpgradeName">@UpgradeName</option>
+            }
+        </select>
+    </div>
+</div>
+
+@code {
+    [Parameter] required public UpgradeContext UpgradeContext { get; set; }
+    [Parameter] required public int IntelDiscount { get; set; }
+    [Parameter] required public string UpgradeGoal { get; set; }
+    private UpgradeTracker? Tracker;
+    private UpgradeTable? Table;
+    private void HandleLevelDictionaryChanged() {}
+    private void HandleUpgradeDictionaryChanged() {}
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+}
