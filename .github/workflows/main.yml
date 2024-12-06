@@ -1,9 +1,8 @@
 name: Deploy to GitHub Pages
 # Run workflow on every push to the master branch
-on:
-  push:
-    branches: [ main ]
-
+on: [push]
+permissions:
+  contents: write
 jobs:
   deploy-to-github-pages:
     # use ubuntu-latest image to run steps on
