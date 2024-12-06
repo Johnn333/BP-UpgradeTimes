@@ -1,3 +1,4 @@
+@using System.Collections.Immutable
 <h4 style="text-align: center;">Upgrade Times</h4>
 <div id="upgradetable">
     <table class="table">
@@ -37,19 +38,19 @@
 
 @code
 {
-    [Parameter] required public IReadOnlyList<ShipData.ShipInfo> ShipInfos { get; set; }
-    [Parameter] required public IReadOnlyDictionary<string, UpgradeData.UpgradeInfo> LevelUpgradeInfo { get; set; }
+    [Parameter] required public ImmutableList<ShipInfo> ShipInfos { get; set; }
+    [Parameter] required public ImmutableSortedDictionary<string, UpgradeInfo> LevelUpgradeInfo { get; set; }
     [Parameter] required public int IntelDiscount { get; set; }
     [Parameter] required public EventCallback OnUpgradesChanged { get; set; }
     
-    private Tuple<Dictionary<string, UpgradeData.UpgradeTimeInfo>, int> _upgradeTimes;
-    public Dictionary<string, UpgradeData.UpgradeTimeInfo> GetUpgradeTimes()
+    private Tuple<Dictionary<string, UpgradeTimeInfo>, int> _upgradeTimes;
+    public Dictionary<string, UpgradeTimeInfo> GetUpgradeTimes()
     {
         if(_upgradeTimes == null || _upgradeTimes.Item2 != IntelDiscount)
         { 
             _upgradeTimes = Tuple.Create(LevelUpgradeInfo.ToDictionary(
                 x => x.Key,
-                x => new UpgradeData.UpgradeTimeInfo(
+                x => new UpgradeTimeInfo(
                     FlagExists() ? new UpgradeTime(x.Value.FlagInfo.BaseTime, IntelDiscount) : null,
                     new UpgradeTime(x.Value.NormalInfo.BaseTime, IntelDiscount)
                 )
@@ -74,7 +75,7 @@
         return Formatter.Format(totalTime);
     }
 
-    public TimeSpan SumTimes(Dictionary<string, UpgradeData.UpgradeTimeInfo> TimeDict, bool flag)
+    public TimeSpan SumTimes(Dictionary<string, UpgradeTimeInfo> TimeDict, bool flag)
     {
         TimeSpan Time = new TimeSpan();
 

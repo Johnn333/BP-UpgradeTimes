@@ -1,3 +1,4 @@
+@using System.Collections.Immutable
 <h4 style="text-align: center;">Outcome Table</h4>
 <div id="outcometable">
     <table class="table">
@@ -20,7 +21,7 @@
             }
             <th>@Formatter.Format(TimeTotal())</th>
         </tr>
-        @foreach(UpgradeData.CurrencyType currencyType in Enum.GetValues(typeof(UpgradeData.CurrencyType)))
+        @foreach(CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
         {
             @if(HasCurrency(currencyType))
             {
@@ -40,9 +41,9 @@
 
 @code
 {
-    [Parameter] required public IReadOnlyList<ShipData.ShipInfo> ShipInfos { get; set; }
-    [Parameter] required public IReadOnlyDictionary<string, UpgradeData.UpgradeInfo> LevelUpgradeInfo { get; set; }
-    [Parameter] required public IReadOnlyDictionary<string, UpgradeData.UpgradeTimeInfo> UpgradeTimes { get; set; }
+    [Parameter] required public ImmutableList<ShipInfo> ShipInfos { get; set; }
+    [Parameter] required public ImmutableSortedDictionary<string, UpgradeInfo> LevelUpgradeInfo { get; set; }
+    [Parameter] required public IReadOnlyDictionary<string, UpgradeTimeInfo> UpgradeTimes { get; set; }
     [Parameter] required public IReadOnlyDictionary<string, bool[]> ShipLevels { get; set; }
     [Parameter] required public string UpgradeGoal { get; set; }
     [Parameter] required public EventCallback OnUpgradesChanged { get; set; }
@@ -56,7 +57,7 @@
         }
         return timeTotal;
     }
-    private TimeSpan TimeLeft(ShipData.ShipInfo ship)
+    private TimeSpan TimeLeft(ShipInfo ship)
     {
         TimeSpan timeLeft = TimeSpan.Zero;
         var shipLevels = ShipLevels[ship.Name];
@@ -86,7 +87,7 @@
         return timeLeft;
     }
 
-    private string TotalCurrencyNeeded(UpgradeData.CurrencyType currencyType)
+    private string TotalCurrencyNeeded(CurrencyType currencyType)
     {
         int flagCurrency = 0;
         int normalCurrency = 0;
@@ -99,7 +100,7 @@
         return FlagExists() ? $"F:{flagCurrency} / N:{normalCurrency}" : $"N:{normalCurrency}";
     }
 
-    private int CurrencyNeeded(ShipData.ShipInfo ship, UpgradeData.CurrencyType currencyType)
+    private int CurrencyNeeded(ShipInfo ship, CurrencyType currencyType)
     {
         int currencyNeeded = 0;
         var shipLevels = ShipLevels[ship.Name];
@@ -126,7 +127,7 @@
         return currencyNeeded;
     }
 
-    private bool HasCurrency(UpgradeData.CurrencyType currencyType)
+    private bool HasCurrency(CurrencyType currencyType)
     {
         foreach(var upgradeInfo in LevelUpgradeInfo)
         {

@@ -1,0 +1,1 @@
+public record UpgradeInfo(CurrencyType CurrencyType, HullInfo NormalInfo, FlagInfo? FlagInfo = null);

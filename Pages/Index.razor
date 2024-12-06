@@ -3,43 +3,11 @@
 <h1 style="text-align: center;">Battle Pirates Upgrade Calculator &#128674; &#128049;</h1>
 <div id="index">
     <div id="normal" style="width: 60%;">
-        <UpgradeTracker @ref="Tracker" ShipInfos="@ShipData.ShipInfos" LevelUpgradeInfo="@UpgradeData.LevelUpgradeInfo" OnLevelsChanged="@(() => HandleLevelDictionaryChanged())" />
-        
-        <UpgradeTable @ref="Table" ShipInfos="@ShipData.ShipInfos" LevelUpgradeInfo="@UpgradeData.LevelUpgradeInfo" IntelDiscount="@IntelDiscount" OnUpgradesChanged="@(() => HandleUpgradeDictionaryChanged())" />
-
-        @if (Tracker != null)
-        {
-            <OutcomeTable ShipInfos="@ShipData.ShipInfos" LevelUpgradeInfo="@UpgradeData.LevelUpgradeInfo" ShipLevels="@Tracker.GetShipLevels()" UpgradeTimes="@Table.GetUpgradeTimes()" UpgradeGoal="@UpgradeGoal" />
-        }
-        <!-- Upgrade Goal Selector -->
-        <label for="upgradeGoal">Upgrade Goal:</label>
-        <select id="upgradeGoal" @bind="UpgradeGoal">
-            @foreach(string UpgradeName in UpgradeData.LevelUpgradeInfo.Keys)
-            {
-                <option value="@UpgradeName">@UpgradeName</option>
-            }
-        </select>
+        <FleetTracker UpgradeContext="@NormalContext" IntelDiscount="@IntelDiscount" UpgradeGoal="CAP" />
     </div>
 
-    <div id="divider" style="width: 5%;"></div>
-
     <div id="dread" style="width: 35%;">
-        <UpgradeTracker @ref="DreadTracker" ShipInfos="@ShipData.DreadInfos" LevelUpgradeInfo="@UpgradeData.DreadLevelUpgradeInfo" OnLevelsChanged="@(() => HandleLevelDictionaryChanged())" />
-        
-        <UpgradeTable @ref="DreadTable" ShipInfos="@ShipData.DreadInfos" LevelUpgradeInfo="@UpgradeData.DreadLevelUpgradeInfo" IntelDiscount="@IntelDiscount" OnUpgradesChanged="@(() => HandleUpgradeDictionaryChanged())" />
-
-        @if (DreadTracker != null)
-        {
-            <OutcomeTable ShipInfos="@ShipData.DreadInfos" LevelUpgradeInfo="@UpgradeData.DreadLevelUpgradeInfo" ShipLevels="@DreadTracker.GetShipLevels()" UpgradeTimes="@DreadTable.GetUpgradeTimes()" UpgradeGoal="@DreadUpgradeGoal" />
-        }
-        <!-- Upgrade Goal Selector -->
-        <label for="dreadupgradeGoal">Upgrade Goal:</label>
-        <select id="dreadupgradeGoal" @bind="DreadUpgradeGoal">
-            @foreach(string UpgradeName in UpgradeData.DreadLevelUpgradeInfo.Keys)
-            {
-                <option value="@UpgradeName">@UpgradeName</option>
-            }
-        </select>
+        <FleetTracker UpgradeContext="@DreadContext" IntelDiscount="@IntelDiscount" UpgradeGoal="E10"/>
     </div>
 
     <div id="intelselect">
@@ -53,16 +21,15 @@
         </select>
     </div>
 
+    <div id="divider" style="width: 5%;"></div>
+
 </div>
 
 @code {
-    private UpgradeTracker? Tracker;
-    private UpgradeTracker? DreadTracker;
-    private UpgradeTable? Table;
-    private UpgradeTable? DreadTable;
+    private UpgradeContext NormalContext = new UpgradeContext(ShipData.FleetInfo, UpgradeData.LevelUpgradeInfo);
+    private UpgradeContext DreadContext = new UpgradeContext(ShipData.DreadInfo, UpgradeData.DreadLevelUpgradeInfo);
     private int IntelDiscount = 15;
-    private string UpgradeGoal = "CAP";
-    private string DreadUpgradeGoal = "E10";
+
     private void HandleLevelDictionaryChanged() {}
     private void HandleUpgradeDictionaryChanged() {}
     protected override void OnAfterRender(bool firstRender)

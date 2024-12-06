@@ -1,17 +1,8 @@
+using System.Collections.Immutable;
+
 public static class UpgradeData
 {
-    public record UpgradeTimeInfo(UpgradeTime? Flag, UpgradeTime Normal);
-    public record UpgradeInfo(CurrencyType CurrencyType, HullInfo NormalInfo, FlagInfo? FlagInfo = null);
-    public record HullInfo(int CurrencyCost, TimeSpan BaseTime);
-    public record FlagInfo(int CurrencyCost, TimeSpan BaseTime) : HullInfo(CurrencyCost, BaseTime);
-    public enum CurrencyType
-    {
-        Kits,
-        Capital_Cores,
-        Evolution_Fragments
-    }
-
-    public static IReadOnlyDictionary<string, UpgradeInfo> LevelUpgradeInfo => new Dictionary<string, UpgradeInfo>
+    public static ImmutableSortedDictionary<string, UpgradeInfo> LevelUpgradeInfo = new SortedDictionary<string, UpgradeInfo>
     {
         { 
             "U1", new UpgradeInfo
@@ -53,9 +44,9 @@ public static class UpgradeData
                 new FlagInfo(10, new TimeSpan( 11, 21, 43, 0 ))
             )
         },
-    };
+    }.ToImmutableSortedDictionary(new KeyComparer());
 
-    public static IReadOnlyDictionary<string, UpgradeInfo> DreadLevelUpgradeInfo => new Dictionary<string, UpgradeInfo>
+    public static ImmutableSortedDictionary<string, UpgradeInfo> DreadLevelUpgradeInfo = new SortedDictionary<string, UpgradeInfo>
     {
         { 
             "E1", new UpgradeInfo
@@ -127,5 +118,20 @@ public static class UpgradeData
                 new HullInfo(200, new TimeSpan( 5, 2, 25, 0 ))
             )
         },
-    };
+    }.ToImmutableSortedDictionary(new KeyComparer());
+
+    public class KeyComparer : IComparer<string>
+    {
+        public int Compare(string? x, string? y)
+        {
+            if (x == null || y == null)
+                throw new ArgumentNullException("Keys cannot be null.");
+
+            int lengthComparison = x.Length.CompareTo(y.Length);
+            if (x.Length.CompareTo(y.Length) != 0)
+                return lengthComparison;
+
+            return string.Compare(x, y, StringComparison.Ordinal);
+        }
+    }
 }

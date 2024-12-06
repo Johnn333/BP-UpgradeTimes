@@ -1,0 +1,1 @@
+public record UpgradeTimeInfo(UpgradeTime? Flag, UpgradeTime Normal);

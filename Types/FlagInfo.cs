@@ -1,0 +1,1 @@
+public record FlagInfo(int CurrencyCost, TimeSpan BaseTime) : HullInfo(CurrencyCost, BaseTime);

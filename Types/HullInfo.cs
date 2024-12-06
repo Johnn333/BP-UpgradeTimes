@@ -1,0 +1,1 @@
+public record HullInfo(int CurrencyCost, TimeSpan BaseTime);

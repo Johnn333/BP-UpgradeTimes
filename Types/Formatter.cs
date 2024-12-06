@@ -5,7 +5,7 @@ class Formatter
         return $"{timeSpan.Days}d {timeSpan.Hours}h {timeSpan.Minutes}m";
     }
 
-    public static string Format(UpgradeData.CurrencyType currencyType)
+    public static string Format(CurrencyType currencyType)
     {
         return currencyType.ToString().Replace("_", " ");
     }
