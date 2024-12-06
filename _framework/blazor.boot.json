@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "BPUpgradeTrackerWasm",
   "resources": {
-    "hash": "sha256-wWKwh7eZz+IKtJ69kiilSmk4rnOsMl0XY7mMfDPiO6c=",
+    "hash": "sha256-0CIOwG/q24946w4gwRl61gPFCtevATa5zzhEWuyQKJA=",
     "jsModuleNative": {
       "dotnet.native.8.0.11.n1sf6xr5tz.js": "sha256-VdKq87/z5NIxZKmuM+fv38XF+RcEb/bg3jVBwQSfwP4="
     },
@@ -17,7 +17,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "BPUpgradeTrackerWasm.wasm": "sha256-oiTOwR7KdXffNrrF5oieNP9ka8l7QMSnUaNC4LMJI18=",
+      "BPUpgradeTrackerWasm.wasm": "sha256-APqaG43BQaM9PrFIHe3RVfRJ2wII2Fa/vfcIvOA9Rv4=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-sgBI0fB4zEFED2aApe+Uu16q6R2xhLslkhbT3pJpt+o=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-spyk6aOlBqGuXrgkag654fMJljJemLYToKEcwC5Nvgo=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-Q4gQS+wAI/o1p0ABACPX+vUj06GrNg33CWKIBqv9S0w=",
